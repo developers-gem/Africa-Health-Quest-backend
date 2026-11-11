@@ -6,14 +6,14 @@ WORKDIR /app
 
 RUN npm install -g npm@11.21.1
 
-# Copy all files (backend at root + packages folder)
+# Copy all files
 COPY . .
 
-# Install dependencies without premature lifecycle scripts
+# Install dependencies without running premature lifecycle scripts
 RUN npm install --ignore-scripts
 
-# Provide @types/node to api-contracts so its build passes
-RUN npm --prefix packages/api-contracts install @types/node --no-save
+# Copy already-installed @types/node into all packages so tsc finds them instantly
+RUN for p in packages/*; do mkdir -p "$p/node_modules/@types" && cp -r node_modules/@types/node "$p/node_modules/@types/" 2>/dev/null || true; done
 
 # Compile packages and backend
 RUN npm run build
