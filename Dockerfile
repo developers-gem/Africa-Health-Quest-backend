@@ -9,11 +9,14 @@ RUN npm install -g npm@11.21.1
 # Copy all files
 COPY . .
 
-# Install dependencies without running premature lifecycle scripts
+# Install dependencies without premature lifecycle scripts
 RUN npm install --ignore-scripts
 
-# Copy already-installed @types/node into all packages so tsc finds them instantly
-RUN for p in packages/*; do mkdir -p "$p/node_modules/@types" && cp -r node_modules/@types/node "$p/node_modules/@types/" 2>/dev/null || true; done
+# Explicitly download @types/node
+RUN npm install @types/node --no-save --ignore-scripts
+
+# Copy @types/node into every package so TypeScript finds it directly
+RUN for p in packages/*; do mkdir -p "$p/node_modules/@types" && cp -r node_modules/@types/node "$p/node_modules/@types/"; done
 
 # Compile packages and backend
 RUN npm run build
