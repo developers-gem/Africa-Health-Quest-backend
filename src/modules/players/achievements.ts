@@ -23,7 +23,7 @@ export function toAchievementDto(a: CatalogueEntry) {
 }
 
 export async function playerAchievements(p: ProgressDocument) {
-  const earnedAt = new Map((p.achievements ?? []).map((a) => [a.key!, a.earnedAt!]));
+  const earnedAt = new Map((p.achievements ?? [] as any).map((a) => [a.key!, a.earnedAt!]));
   const catalogue = await listCatalogue(true);
   const source = {
     tierIndex: p.tierIndex,
@@ -33,7 +33,7 @@ export async function playerAchievements(p: ProgressDocument) {
   return {
     earned: catalogue
       .filter((a) => earnedAt.has(a.key))
-      .map((a) => ({ ...toAchievementDto(a), earnedAt: earnedAt.get(a.key)!.toISOString() })),
+      .map((a) => ({ ...toAchievementDto(a), earnedAt: earnedAt.get(a.key as any)!.toISOString() })),
     available: catalogue
       .filter((a) => a.status === "active" && !earnedAt.has(a.key))
       .map((a) => ({
