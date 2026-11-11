@@ -23,7 +23,8 @@ export function toAchievementDto(a: CatalogueEntry) {
 }
 
 export async function playerAchievements(p: ProgressDocument) {
-  const earnedAt = new Map((p.achievements ?? [] as any).map((a) => [a.key!, a.earnedAt!]));
+//   const earnedAt = new Map((p.achievements ?? [] as any).map((a) => [a.key!, a.earnedAt!]));
+  const earnedAt = new Map(((p.achievements ?? []).map((a: any) => [a.key!, a.earnedAt!])) as any);
   const catalogue = await listCatalogue(true);
   const source = {
     tierIndex: p.tierIndex,
