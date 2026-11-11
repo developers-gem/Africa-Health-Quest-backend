@@ -6,17 +6,19 @@ WORKDIR /app
 
 RUN npm install -g npm@11.21.1
 
-# Copy dependency files and install all packages (including TypeScript build tools)
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Copy package.json
+COPY package*.json ./
 
-# Copy the rest of the project files
+# Install dependencies with npm install (since package-lock.json is not present)
+RUN npm install
+
+# Copy the source code and configuration files
 COPY . .
 
-# Build TypeScript to JavaScript
+# Build TypeScript
 RUN npm run build
 
-# Remove development dependencies to keep the final image small
+# Remove development dependencies
 RUN npm prune --omit=dev --ignore-scripts
 
 # --- Production Stage ---
@@ -24,12 +26,12 @@ FROM ${NODE_IMAGE}
 ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy production dependencies, package.json, and compiled JavaScript code
+# Copy production node_modules and built dist folder
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/dist ./dist
 
-# Create storage directory and set permissions
+# Create storage directory
 RUN mkdir -p /app/var/media && chown -R node:node /app/var
 
 USER node
