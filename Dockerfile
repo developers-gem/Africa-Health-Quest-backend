@@ -9,11 +9,11 @@ RUN npm install -g npm@11.21.1
 # Copy everything including the packages/ folder
 COPY . .
 
-# Install dependencies (npm workspaces will link local packages automatically)
+# Install dependencies using local file: paths
 RUN npm install
 
-# Build the shared packages first, then the backend
-RUN npm run build --workspaces --if-present && npm run build
+# Build each package first (if needed), then build the backend
+RUN for d in packages/*; do (cd "$d" && npm run build --if-present || true); done && npm run build
 
 # Prune dev dependencies for production
 RUN npm prune --omit=dev --ignore-scripts
@@ -23,7 +23,7 @@ FROM ${NODE_IMAGE}
 ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy production node_modules, package.json, compiled dist, and built packages
+# Copy production node_modules, package.json, compiled dist, and packages
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/dist ./dist
