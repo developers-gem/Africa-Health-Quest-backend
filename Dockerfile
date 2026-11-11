@@ -6,23 +6,20 @@ WORKDIR /app
 
 RUN npm install -g npm@11.21.1
 
-# Copy everything including the packages/ folder
+# Copy all project files
 COPY . .
 
-# Install dependencies using local file: paths
-RUN npm install
+# Install all dependencies first without premature lifecycle scripts
+RUN npm install --ignore-scripts
 
-# Build each package first (if needed), then build the backend
-# RUN for d in packages/*; do (cd "$d" && npm run build --if-present || true); done && npm run build
-RUN npm --prefix packages/shared-types run build --if-present || true
-RUN npm --prefix packages/api-contracts run build --if-present || true
-RUN npm --prefix packages/game-content run build --if-present || true
+# Build shared packages now that @types/node is installed
+RUN npm run build:packages --if-present || true
+
+# Build backend
 RUN npm run build
 
 # Prune dev dependencies for production
 RUN npm prune --omit=dev --ignore-scripts
-
-
 
 # --- Production Stage ---
 FROM ${NODE_IMAGE}
