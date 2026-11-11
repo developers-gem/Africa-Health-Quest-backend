@@ -18,8 +18,8 @@ RUN npm install @types/node --no-save --ignore-scripts
 # Copy @types/node into every package so TypeScript finds it directly
 RUN for p in packages/*; do mkdir -p "$p/node_modules/@types" && cp -r node_modules/@types/node "$p/node_modules/@types/"; done
 
-# Compile packages and backend
-RUN npm run build
+# Build the 3 shared packages, then compile the backend directly
+RUN npm run build:packages && npx tsc -p tsconfig.build.json
 
 # Remove development dependencies
 RUN npm prune --omit=dev --ignore-scripts
