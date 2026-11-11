@@ -13,8 +13,8 @@ COPY . .
 RUN npm install
 
 # Build each package first (if needed), then build the backend
-RUN for d in packages/*; do (cd "$d" && npm run build --if-present || true); done && npm run build
-
+# RUN for d in packages/*; do (cd "$d" && npm run build --if-present || true); done && npm run build
+RUN npm run build
 # Prune dev dependencies for production
 RUN npm prune --omit=dev --ignore-scripts
 
