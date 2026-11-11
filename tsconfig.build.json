@@ -1,5 +1,38 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": { "rootDir": "src", "outDir": "dist" },
-  "include": ["src"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ahq/api-contracts": [
+        "packages/api-contracts/src/index.ts",
+        "packages/api-contracts/index.ts",
+        "packages/api-contracts"
+      ],
+      "@ahq/shared-types": [
+        "packages/shared-types/src/index.ts",
+        "packages/shared-types/index.ts",
+        "packages/shared-types"
+      ],
+      "@ahq/game-content": [
+        "packages/game-content/src/index.ts",
+        "packages/game-content/index.ts",
+        "packages/game-content"
+      ],
+      "@ahq/*": [
+        "packages/*/src/index.ts",
+        "packages/*/index.ts",
+        "packages/*"
+      ]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"]
 }

@@ -14,9 +14,15 @@ RUN npm install
 
 # Build each package first (if needed), then build the backend
 # RUN for d in packages/*; do (cd "$d" && npm run build --if-present || true); done && npm run build
+RUN npm --prefix packages/shared-types run build --if-present || true
+RUN npm --prefix packages/api-contracts run build --if-present || true
+RUN npm --prefix packages/game-content run build --if-present || true
 RUN npm run build
+
 # Prune dev dependencies for production
 RUN npm prune --omit=dev --ignore-scripts
+
+
 
 # --- Production Stage ---
 FROM ${NODE_IMAGE}
