@@ -1,0 +1,32 @@
+{
+  "name": "@ahq/game-content",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Canonical game content (missions WITH answer keys, countries, tiers, Commander events). Backend/tooling only — never import from web or mobile code.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "import:prototype": "tsx scripts/import-prototype.ts && prettier --write src/prototype-content.ts",
+    "test:unit": "vitest run",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ahq/shared-types": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.0"
+  }
+}

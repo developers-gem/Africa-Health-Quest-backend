@@ -1,60 +1,51 @@
 {
-  "name": "@ahq/backend",
-  "version": "0.1.0",
+  "name": "africa-health-quest",
   "private": true,
-  "description": "Africa Health Quest REST API (Express + MongoDB).",
-  "type": "module",
-  "main": "./dist/server.js",
+  "description": "Africa Health Quest — Save Lives. Build Healthier Nations.",
   "workspaces": [
-    "packages/*"
+    "packages/shared-types",
+    "packages/api-contracts",
+    "packages/game-content",
+    "apps/backend",
+    "apps/web"
   ],
-  "scripts": {
-    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
-    "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/server.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "admin:grant": "tsx --env-file-if-exists=.env src/scripts/grant-admin.ts",
-    "test:unit": "vitest run test/unit",
-    "test:integration": "vitest run test/integration",
-    "seed": "tsx --env-file-if-exists=.env src/scripts/seed.ts",
-    "worker": "node dist/worker.js",
-    "dev:worker": "tsx watch --env-file-if-exists=.env src/worker.ts",
-    "ai:eval": "tsx --env-file-if-exists=.env src/scripts/eval-debriefs.ts"
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=11"
   },
-
-  "dependencies": {
-    "@ahq/api-contracts": "file:packages/api-contracts",
-    "@ahq/game-content": "file:packages/game-content",
-    "@ahq/shared-types": "file:packages/shared-types",
-    "@anthropic-ai/sdk": "^1.4.0",
-    "@aws-sdk/client-s3": "^3.1163.0",
-    "compression": "^1.8.2",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.1.0",
-    "firebase-admin": "^14.5.0",
-    "google-auth-library": "^10.4.0",
-    "helmet": "^8.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.0",
-    "nodemailer": "^10.3.1",
-    "pino": "^10.0.0",
-    "pino-http": "^11.0.0"
+  "scripts": {
+    "prepare": "npm run build:packages",
+    "build:packages": "npm run build -w @ahq/shared-types && npm run build -w @ahq/api-contracts && npm run build -w @ahq/game-content",
+    "build": "npm run build:packages && npm run build -w @ahq/backend && npm run build -w @ahq/web",
+    "dev": "concurrently -k -n backend,web -c green,cyan \"npm:dev:backend\" \"npm:dev:web\"",
+    "dev:backend": "npm run dev -w @ahq/backend",
+    "dev:web": "npm run dev -w @ahq/web",
+    "start:backend": "npm run start -w @ahq/backend",
+    "preview:web": "npm run preview -w @ahq/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "npm run test:unit --workspaces --if-present",
+    "test:integration": "npm run test:integration --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w @ahq/web",
+    "openapi": "npm run openapi -w @ahq/api-contracts",
+    "db:up": "docker compose up -d --wait mongo",
+    "db:down": "docker compose down",
+    "admin:grant": "npm run admin:grant -w @ahq/backend --"
   },
   "devDependencies": {
-    "@types/compression": "^1.8.1",
-    "@types/cookie-parser": "^1.4.9",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.18.0",
-    "@types/nodemailer": "^7.0.2",
-    "@types/supertest": "^6.0.3",
-    "supertest": "^7.1.4",
-    "tsx": "^4.20.0",
-    "typescript": "^5.7.0"
-  }
+    "@eslint/js": "^9.39.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^4.0.0",
+    "concurrently": "^9.2.1"
+  },
+  "type": "module",
+  "packageManager": "npm@11.21.1"
 }

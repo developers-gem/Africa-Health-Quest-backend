@@ -1,0 +1,23 @@
+{
+  "name": "@ahq/shared-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dependency-free constants and TypeScript types shared by every Africa Health Quest package and app.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

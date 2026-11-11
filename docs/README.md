@@ -1,0 +1,15 @@
+# Documentation index
+
+| Folder          | Documents                                                                                                                                                                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `requirements/` | `PRODUCT_REQUIREMENTS.md`, `FUNCTIONAL_REQUIREMENTS.md`, `EXISTING_FEATURE_INVENTORY.md`, `SCREEN_INVENTORY.md`, `TECHNICAL_AUDIT.md`, `TECHNICAL_RISKS.md` (incl. product decisions Q1–Q12), `MIGRATION_PLAN.md`, `DEVELOPMENT_ROADMAP.md`, `audit-evidence/` (screenshots) |
+| `architecture/` | `SYSTEM_ARCHITECTURE.md`, `SECURITY_ARCHITECTURE.md`, `WEB_ARCHITECTURE.md`, `MOBILE_ARCHITECTURE.md`, `AI_ARCHITECTURE.md`, `FOUNDATION_OVERVIEW.md` (backend module layout), `decisions.md`                                                                                |
+| `database/`     | `DATABASE_SCHEMA.md`                                                                                                                                                                                                                                                         |
+| `api/`          | `API_SPECIFICATION.md` (design reference), `openapi.json` (generated from `packages/api-contracts`, implemented endpoints only), `README.md` (client conventions)                                                                                                            |
+| `testing/`      | `TESTING.md` — test types, how to run them, what CI runs                                                                                                                                                                                                                     |
+| `deployment/`   | `DEVELOPMENT_ENVIRONMENT.md` (local setup), `DEPLOYMENT.md` (production build and runtime configuration)                                                                                                                                                                     |
+| `release/`      | **Release set (Phase 8):** `DEPLOYMENT_GUIDE.md`, `PRODUCTION_CHECKLIST.md`, `SECURITY_AUDIT.md`, `TESTING_REPORT.md`, `API_DOCUMENTATION.md`, `DATABASE_BACKUP_GUIDE.md`, `MOBILE_RELEASE_GUIDE.md`, `ADMIN_USER_GUIDE.md`                                                  |
+| `reports/`      | Phase implementation reports; `phase-8-final-acceptance.md` is the release verdict                                                                                                                                                                                           |
+
+Documents written before the 2026-11-03 restructure refer to sibling documents by file name only
+(for example `TECHNICAL_RISKS.md`); use the table above to find them.

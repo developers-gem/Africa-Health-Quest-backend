@@ -1,0 +1,53 @@
+# Local stack. MongoDB runs as a single-node replica set (required for multi-document transactions).
+#   npm run db:up            → MongoDB only (run backend/web with npm scripts)
+#   docker compose --profile full up -d --build   → MongoDB + backend container
+services:
+  mongo:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports: ["27017:27017"]
+    volumes: [mongo-data:/data/db]
+    healthcheck:
+      # Initiates the replica set on first start, then reports healthy once it is PRIMARY.
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "try { rs.status().ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] }).ok }; db.hello().isWritablePrimary ? 0 : 1"
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
+
+  backend:
+    profiles: [full]
+    build: { context: ., dockerfile: apps/backend/Dockerfile }
+    depends_on: { mongo: { condition: service_healthy } }
+    ports: ["4000:4000"]
+    environment: &backend-env
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongo:27017/ahq?directConnection=true
+      # Required. The backend and worker refuse to start without them (scripts/setup.sh generates both into
+      # apps/backend/.env; export them or put them in a root .env for Compose).
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:-}
+      WEB_APP_URL: http://localhost:5173
+      MAIL_TRANSPORT: log
+      MEDIA_STORAGE_DIR: /app/var/media
+    volumes: [media-data:/app/var/media]
+
+  # Scheduled jobs (guest purge, stale attempt expiry). Same image, separate process; a MongoDB lease keeps
+  # scheduled work to one worker even if several run.
+  worker:
+    profiles: [full]
+    build: { context: ., dockerfile: apps/backend/Dockerfile }
+    depends_on: { mongo: { condition: service_healthy } }
+    command: ["node", "dist/worker.js"]
+    healthcheck: { disable: true }
+    environment: *backend-env
+    volumes: [media-data:/app/var/media]
+
+volumes:
+  mongo-data:
+  media-data:
