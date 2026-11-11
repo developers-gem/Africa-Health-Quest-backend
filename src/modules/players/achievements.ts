@@ -32,9 +32,12 @@ export async function playerAchievements(p: ProgressDocument) {
     stats: (p.stats ?? {}) as Partial<Record<StatKey, number>>,
   };
   return {
+//     earned: catalogue
+//       .filter((a) => earnedAt.has(a.key))
+//       .map((a) => ({ ...toAchievementDto(a), earnedAt: earnedAt.get(a.key as any)!.toISOString() })),
     earned: catalogue
       .filter((a) => earnedAt.has(a.key))
-      .map((a) => ({ ...toAchievementDto(a), earnedAt: earnedAt.get(a.key as any)!.toISOString() })),
+      .map((a) => ({ ...toAchievementDto(a), earnedAt: (earnedAt.get(a.key as any) as any)?.toISOString() })),
     available: catalogue
       .filter((a) => a.status === "active" && !earnedAt.has(a.key))
       .map((a) => ({
