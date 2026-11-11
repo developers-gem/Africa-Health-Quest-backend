@@ -23,10 +23,11 @@
     "dev:worker": "tsx watch --env-file-if-exists=.env src/worker.ts",
     "ai:eval": "tsx --env-file-if-exists=.env src/scripts/eval-debriefs.ts"
   },
+
   "dependencies": {
-    "@ahq/api-contracts": "*",
-    "@ahq/game-content": "*",
-    "@ahq/shared-types": "*",
+    "@ahq/api-contracts": "file:packages/api-contracts",
+    "@ahq/game-content": "file:packages/game-content",
+    "@ahq/shared-types": "file:packages/shared-types",
     "@anthropic-ai/sdk": "^1.4.0",
     "@aws-sdk/client-s3": "^3.1163.0",
     "compression": "^1.8.2",
