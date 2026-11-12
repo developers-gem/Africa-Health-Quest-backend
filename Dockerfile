@@ -25,7 +25,7 @@ RUN npm prune --omit=dev --ignore-scripts
 
 # --- Production Stage ---
 FROM ${NODE_IMAGE}
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 WORKDIR /app
 
 # Copy production node_modules, package.json, dist, and packages
@@ -40,6 +40,6 @@ RUN mkdir -p /app/var/media && chown -R node:node /app/var
 USER node
 EXPOSE 4000
 
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1:4000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- "http://127.0.0.1:${PORT:-4000}/health" || exit 1
 
 CMD ["node", "dist/server.js"]

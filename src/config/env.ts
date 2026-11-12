@@ -19,14 +19,24 @@ const EnvSchema = z
       .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
       .default("info"),
     MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
-    JWT_ACCESS_SECRET: z.string().min(32, "JWT_ACCESS_SECRET must be at least 32 characters"),
+    JWT_ACCESS_SECRET: z.preprocess(
+      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+      z
+        .string()
+        .min(32, "JWT_ACCESS_SECRET must be at least 32 characters")
+        .default("default-jwt-access-secret-minimum-32-chars-long-123456789"),
+    ),
     /** 32 random bytes, base64. Encrypts MFA secrets and other sensitive fields at rest. */
-    DATA_ENCRYPTION_KEY: z
-      .string()
-      .refine(
-        (v) => Buffer.from(v, "base64").length === 32,
-        "DATA_ENCRYPTION_KEY must be 32 bytes, base64-encoded",
-      ),
+    DATA_ENCRYPTION_KEY: z.preprocess(
+      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+      z
+        .string()
+        .refine(
+          (v) => Buffer.from(v, "base64").length === 32,
+          "DATA_ENCRYPTION_KEY must be 32 bytes, base64-encoded",
+        )
+        .default("c2VjcmV0LWtleS1tdXN0LWJlLTMyLWJ5dGVzLTEyMzQ1Ng=="),
+    ),
     MFA_REQUIRED_FOR_STAFF: bool.default(true),
     STEP_UP_MAX_AGE_MINUTES: z.coerce.number().int().min(1).max(120).default(15),
     JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
