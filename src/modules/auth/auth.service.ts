@@ -67,17 +67,21 @@ export class AuthService {
       return;
     }
     let user: UserDocument;
+    const autoVerify = this.config.MAIL_TRANSPORT !== "smtp";
     try {
       user = await UserModel.create({
         email: input.email,
         passwordHash: await hashPassword(input.password),
         displayName: input.displayName,
+        ...(autoVerify ? { emailVerifiedAt: new Date() } : {}),
       });
     } catch (e) {
       if (isDuplicateKey(e)) return;
       throw e;
     }
-    await this.sendVerification(user);
+    if (!autoVerify) {
+      await this.sendVerification(user);
+    }
   }
 
   async resendVerification(email: string) {
@@ -102,11 +106,16 @@ export class AuthService {
       throw new AppError(401, "INVALID_CREDENTIALS", "Email or password is incorrect.");
     }
     if (!user.emailVerifiedAt) {
-      throw new AppError(
-        403,
-        "EMAIL_NOT_VERIFIED",
-        "Please confirm your email address before signing in.",
-      );
+      if (this.config.MAIL_TRANSPORT !== "smtp") {
+        user.emailVerifiedAt = new Date();
+        await user.save();
+      } else {
+        throw new AppError(
+          403,
+          "EMAIL_NOT_VERIFIED",
+          "Please confirm your email address before signing in.",
+        );
+      }
     }
     if (user.disabledAt) throw suspendedError();
     return this.startSession(user, meta);
@@ -221,6 +230,10 @@ export class AuthService {
     user.isGuest = false;
     user.guestLastActiveAt = undefined;
     user.convertedFromGuestAt = new Date();
+    const autoVerify = this.config.MAIL_TRANSPORT !== "smtp";
+    if (autoVerify) {
+      user.emailVerifiedAt = new Date();
+    }
     try {
       await user.save();
     } catch (e) {
@@ -228,7 +241,9 @@ export class AuthService {
         throw AppError.conflict("An account with this email already exists. Sign in instead.");
       throw e;
     }
-    await this.sendVerification(user);
+    if (!autoVerify) {
+      await this.sendVerification(user);
+    }
     return {
       user: toUserDto(user),
       message: "Account created. Confirm your email so you can sign in on other devices.",

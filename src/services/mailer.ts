@@ -15,7 +15,7 @@ export class LogMailer implements Mailer {
   constructor(private readonly logger: Logger) {}
   async send(message: MailMessage) {
     this.sent.push(message);
-    this.logger.info({ to: message.to, subject: message.subject }, "mail (log transport)");
+    this.logger.info({ to: message.to, subject: message.subject, body: message.text }, "mail (log transport)");
   }
 }
 
