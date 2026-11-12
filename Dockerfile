@@ -16,7 +16,9 @@ RUN npm install --ignore-scripts
 RUN for p in packages/*; do mkdir -p "$p/node_modules/@types" && cp -r node_modules/@types/node "$p/node_modules/@types/"; done
 
 # Build packages and backend
-RUN npm run build:packages && npx tsc -p tsconfig.build.json
+RUN npm run build:packages && npx tsc -p tsconfig.build.json && \
+    (if [ -f dist/src/server.js ] && [ ! -f dist/server.js ]; then cp -r dist/src/* dist/; fi) && \
+    test -f dist/server.js
 
 # Remove development dependencies
 RUN npm prune --omit=dev --ignore-scripts

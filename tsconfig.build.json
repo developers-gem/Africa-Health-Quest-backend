@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -12,24 +13,13 @@
     "baseUrl": ".",
     "paths": {
       "@ahq/api-contracts": [
-        "packages/api-contracts/src/index.ts",
-        "packages/api-contracts/index.ts",
-        "packages/api-contracts"
+        "packages/api-contracts/dist/index.d.ts"
       ],
       "@ahq/shared-types": [
-        "packages/shared-types/src/index.ts",
-        "packages/shared-types/index.ts",
-        "packages/shared-types"
+        "packages/shared-types/dist/index.d.ts"
       ],
       "@ahq/game-content": [
-        "packages/game-content/src/index.ts",
-        "packages/game-content/index.ts",
-        "packages/game-content"
-      ],
-      "@ahq/*": [
-        "packages/*/src/index.ts",
-        "packages/*/index.ts",
-        "packages/*"
+        "packages/game-content/dist/index.d.ts"
       ]
     }
   },
